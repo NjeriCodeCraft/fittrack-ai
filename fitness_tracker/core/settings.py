@@ -63,7 +63,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# Database — uses MySQL locally, Railway MySQL in production
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
