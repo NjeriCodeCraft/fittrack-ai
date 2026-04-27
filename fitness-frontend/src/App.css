@@ -1,0 +1,133 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f4f8;
+  color: #333;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+h2 { color: #2d6a4f; margin-bottom: 16px; }
+h3 { color: #40916c; margin-bottom: 12px; }
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: #40916c;
+}
+
+button {
+  background: #2d6a4f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+button:hover { background: #1b4332; }
+
+button.danger {
+  background: #e63946;
+}
+
+button.danger:hover { background: #c1121f; }
+
+button.secondary {
+  background: #74c69d;
+  color: #1b4332;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+th {
+  background: #2d6a4f;
+  color: white;
+  padding: 10px;
+  text-align: left;
+  font-size: 13px;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+}
+
+tr:hover td { background: #f8f9fa; }
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.stat-card .number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2d6a4f;
+}
+
+.stat-card .label {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.alert.success { background: #d8f3dc; color: #1b4332; }
+.alert.error { background: #ffe0e0; color: #c1121f; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.normal { background: #d8f3dc; color: #1b4332; }
+.badge.overweight { background: #fff3cd; color: #856404; }
+.badge.obese { background: #ffe0e0; color: #c1121f; }
+.badge.underweight { background: #cce5ff; color: #004085; }
