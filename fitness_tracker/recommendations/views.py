@@ -3,13 +3,17 @@ from rest_framework.response import Response
 from rest_framework import permissions
 from .models import Recommendation
 from .serializers import RecommendationSerializer
-import joblib
 import os
-import numpy as np
 
 # Load the trained model once when server starts
-MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'ai_module', 'fitness_model.pkl')
-model = joblib.load(MODEL_PATH)
+try:
+    import joblib
+    import numpy as np
+    MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'ai_module', 'fitness_model.pkl')
+    model = joblib.load(MODEL_PATH) if os.path.exists(MODEL_PATH) else None
+except ImportError:
+    model = None
+    np = None
 
 WORKOUT_RECOMMENDATIONS = {
     'sedentary': {
@@ -36,13 +40,12 @@ def get_nutrition_feedback(user):
     age = user.age or 25
     gender = user.gender or 'other'
 
-    # Calculate BMR using Mifflin-St Jeor
     if gender == 'male':
         bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5
     else:
         bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161
 
-    tdee = bmr * 1.55  # Moderate activity multiplier
+    tdee = bmr * 1.55
 
     goal = user.fitness_goal or 'maintain'
     if goal == 'lose_weight':
@@ -64,16 +67,13 @@ class RecommendationView(APIView):
     def get(self, request):
         user = request.user
 
-        # Get user features for AI model
         from bmi.models import BMIRecord
         from activities.models import ActivityLog
         from datetime import date, timedelta
 
-        # Get latest BMI
         latest_bmi = BMIRecord.objects.filter(user=user).order_by('-date').first()
         bmi_value = latest_bmi.bmi_value if latest_bmi else 22.0
 
-        # Get weekly activity stats
         week_ago = date.today() - timedelta(days=7)
         recent_activities = ActivityLog.objects.filter(user=user, date__gte=week_ago)
         weekly_count = recent_activities.count()
@@ -82,17 +82,23 @@ class RecommendationView(APIView):
 
         age = user.age or 25
 
-        # Run AI prediction
-        features = np.array([[age, bmi_value, weekly_count, avg_duration]])
-        activity_level = model.predict(features)[0]
+        # Run AI prediction or fallback
+        if model is not None and np is not None:
+            features = np.array([[age, bmi_value, weekly_count, avg_duration]])
+            activity_level = model.predict(features)[0]
+        else:
+            if weekly_count >= 5:
+                activity_level = 'highly_active'
+            elif weekly_count >= 3:
+                activity_level = 'moderately_active'
+            elif weekly_count >= 1:
+                activity_level = 'lightly_active'
+            else:
+                activity_level = 'sedentary'
 
-        # Get workout recommendation
         rec_data = WORKOUT_RECOMMENDATIONS[activity_level]
-
-        # Get nutrition feedback
         nutrition_advice, calorie_target = get_nutrition_feedback(user)
 
-        # Save recommendations to DB
         Recommendation.objects.create(
             user=user,
             rec_type='workout',
